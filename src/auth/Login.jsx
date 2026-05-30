@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const { setUser } = useContext(UserContext);
-  const { setIsLogin } = useContext(UserContext);
+  const { islogin, setIsLogin } = useContext(UserContext);
   
 
   const [email, setEmail] = useState("");
@@ -30,12 +30,6 @@ export default function Login() {
       return;
     }
 
-    
-
-    // setUser({
-    //   email,
-    //   pass,
-    // });
     userdata.forEach(i => {
         if(i.Email == email && i.Pass == pass){
             setMessage("Login Successful");

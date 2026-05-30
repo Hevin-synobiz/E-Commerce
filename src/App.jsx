@@ -11,15 +11,18 @@ import RegisterUser from "./user/RegisterForm";
 import Products from "./pages/Products";
 import Cart from "./pages/Cart";
 import Bill from "./pages/Bill"
+import MyProfile from "./pages/Profile";
 
 function ProtectedRoute({ children, isLogin }) {
-  return isLogin ? children : <Navigate to="/" />;
+  return isLogin ? children : <Navigate to="/" replace />;
 }
 
   
 function App() {
   const [user, setUser] = useState({});
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(
+    localStorage.getItem("isLogin") === "true"
+  );
 
   return (
     <UserContext.Provider value={{user, setUser, isLogin, setIsLogin}}>
@@ -49,6 +52,11 @@ function App() {
           <Route path="/bill" 
                  element={<ProtectedRoute isLogin={isLogin}>
                             <Bill />
+                          </ProtectedRoute>} 
+          />
+          <Route path="/profile" 
+                 element={<ProtectedRoute isLogin={isLogin}>
+                            <MyProfile />
                           </ProtectedRoute>} 
           />
         </Routes>
