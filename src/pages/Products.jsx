@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate} from "react-router-dom";
+import { useContext } from 'react' 
+import { UserContext } from '../common/Context'
 import axios from "axios";
 
 export default function Products() {
-
+  const { setItem } = useContext(UserContext)
   const [products, setProducts] = useState([]);
-  const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
@@ -16,8 +17,18 @@ export default function Products() {
       setProducts(data.products);
   };
   
-  const cart = async () => {
-    navigate("/cart");
+  const cart = async (id) => {
+    navigate("/cart" );
+    setItem(
+      id
+    )
+  };
+
+  const buy = async (id) => {
+    navigate("/bill" );
+    setItem(
+      id
+    )
   };
 
   useEffect(() => {
@@ -26,21 +37,8 @@ export default function Products() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-10">
-
-      <h1 className="text-4xl font-bold text-center mb-10">
-        POS Product Portal
-      </h1>
-
-      {/* FETCH API PRODUCTS */}
-
-      <div className="mb-10">
-        <h2 className="text-2xl font-bold mb-5 text-blue-600">
-          Fetch API Products
-        </h2>
-
         <div className="grid grid-cols-3 gap-5">
-
-          {products.slice(0, 6).map((item) => (
+          {products.map((item) => (
             <div
               key={item.id}
               className="bg-white p-5 rounded-lg shadow-lg"
@@ -58,14 +56,15 @@ export default function Products() {
               <p className="text-gray-600">
                 ₹ {item.price}
               </p>
-
-              <button className="bg-blue-500 text-white px-4 py-2 rounded mt-3" onClick={cart}>
+              <button className="bg-blue-500 text-white px-4 py-2 rounded mt-3" onClick={() => buy(item)}>
+                Buy
+              </button>
+              <button className="bg-blue-500 text-white px-4 py-2 rounded mt-3" onClick={() => cart(item)}>
                 Add To Cart
               </button>
             </div>
           ))}
         </div>
       </div>
-    </div>
   );
 }

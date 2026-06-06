@@ -12,6 +12,7 @@ import Products from "./pages/Products";
 import Cart from "./pages/Cart";
 import Bill from "./pages/Bill"
 import MyProfile from "./pages/Profile";
+import Dashboard from "./pages/Dashboard";
 
 function ProtectedRoute({ children, isLogin }) {
   return isLogin ? children : <Navigate to="/" replace />;
@@ -19,44 +20,55 @@ function ProtectedRoute({ children, isLogin }) {
 
   
 function App() {
+  const [Item, setItem] = useState(null);
   const [user, setUser] = useState({});
   const [isLogin, setIsLogin] = useState(
     localStorage.getItem("isLogin") === "true"
   );
 
   return (
-    <UserContext.Provider value={{user, setUser, isLogin, setIsLogin}}>
+    <UserContext.Provider value={{user, setUser, isLogin, setIsLogin, Item, setItem}}>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/home" 
-                 element={<ProtectedRoute isLogin={isLogin}>
-                            <Home />
-                          </ProtectedRoute>} 
-          />
           <Route path="/registeruser" 
                  element={
                     <RegisterUser /> 
                  }
           />
+          <Route path="/home" 
+                 element={<ProtectedRoute isLogin={isLogin}>
+                            <Home >
+                            <Dashboard />
+                            </Home>
+                          </ProtectedRoute>} 
+          />
           <Route path="/products" 
                  element={<ProtectedRoute isLogin={isLogin}>
-                            <Products />
+                            <Home>
+                              <Products />
+                            </Home>
                           </ProtectedRoute>} 
           />
           <Route path="/cart" 
                  element={<ProtectedRoute isLogin={isLogin}>
+                          <Home>
                             <Cart />
+                          </Home>
                           </ProtectedRoute>} 
           />
           <Route path="/bill" 
                  element={<ProtectedRoute isLogin={isLogin}>
+                          <Home>
                             <Bill />
+                          </Home>
                           </ProtectedRoute>} 
           />
           <Route path="/profile" 
                  element={<ProtectedRoute isLogin={isLogin}>
+                          <Home>
                             <MyProfile />
+                          </Home>
                           </ProtectedRoute>} 
           />
         </Routes>
