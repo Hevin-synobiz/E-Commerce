@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { useContext } from 'react' 
-import { UserContext } from '../common/Context'
-import { Link, useNavigate} from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { UserContext } from "../common/UserContext";
+import { useNavigate } from "react-router-dom";
 
 export default function MyProfile() {
-  const { setUser } = useContext(UserContext)
+  const { setUser } = useContext(UserContext);
+
+  const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -14,7 +15,19 @@ export default function MyProfile() {
 
   const [message, setMessage] = useState("");
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    const storedUser = JSON.parse(
+      localStorage.getItem("user") || "[]"
+    );
+
+    if (storedUser.length > 0) {
+      setName(storedUser[0].Name || "");
+      setEmail(storedUser[0].Email || "");
+      setPhone(storedUser[0].Phone || "");
+      setDept(storedUser[0].Dept || "");
+      setPass(storedUser[0].Pass || "");
+    }
+  }, []);
 
   const update = () => {
     const emailPattern =
@@ -26,91 +39,104 @@ export default function MyProfile() {
     }
 
     if (pass.length < 4) {
-      setMessage("Password must be 4 characters");
+      setMessage("Password must be at least 4 characters");
       return;
     }
 
-    setUser({
-      name,
-      email,
-      phone,
-      dept,
-      pass
-    });
+    const userData = {
+      Name: name,
+      Email: email,
+      Phone: phone,
+      Dept: dept,
+      Pass: pass,
+    };
 
-    const user = JSON.stringify([{
-        "Name": name,
-        "Email": email,
-        "Phone": phone,
-        "Dept": dept,
-        "Pass": pass
-    }])
-    localStorage.setItem("user", user);
+    setUser(userData);
 
+    localStorage.setItem(
+      "user",
+      JSON.stringify([userData])
+    );
+
+    setMessage("Profile Updated");
 
     setTimeout(() => {
       navigate("/home");
-    }, 500);
+    }, 1000);
   };
 
   return (
-    <>
-      <div className="flex justify-center items-center h-screen">
-        <div>
-          <h2>Profile</h2>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+      <div className="bg-white shadow-lg rounded-xl p-8 w-[450px]">
+        <h2 className="text-3xl font-bold text-center mb-6">
+          My Profile
+        </h2>
 
-          <div style={{ display: "flex", gap: "20px", flexDirection: "column",}}>
-            <div style={{ display: "flex", gap: "40px", justifyContent: "center"}}>
-              <label>Name: </label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="border rounded"
-              />
-            </div>
+        <div className="space-y-4">
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) =>
+              setName(e.target.value)
+            }
+            className="w-full border p-3 rounded"
+          />
 
-            <div style={{ display: "flex", gap: "40px", justifyContent: "center" }}>
-              <label>Email :</label>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="border rounded"
-              />
-            </div>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) =>
+              setEmail(e.target.value)
+            }
+            className="w-full border p-3 rounded"
+          />
 
-            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-              <label>Password :</label>
-              <input
-                value={pass}
-                onChange={(e) => setPass(e.target.value)}
-                className="border rounded"
-              />
-            </div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={pass}
+            onChange={(e) =>
+              setPass(e.target.value)
+            }
+            className="w-full border p-3 rounded"
+          />
 
-            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-              <label>Phone no.:</label>
-              <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="border rounded"
-              />
-            </div>
+          <input
+            type="text"
+            placeholder="Phone Number"
+            value={phone}
+            onChange={(e) =>
+              setPhone(e.target.value)
+            }
+            className="w-full border p-3 rounded"
+          />
 
-            <div style={{ display: "flex", gap: "45px", justifyContent: "center" }}>
-              <label>Dept.:</label>
-              <input
-                value={dept}
-                onChange={(e) => setDept(e.target.value)}
-                className="border rounded"
-              />
-            </div>
-            <button onClick={update} className="w-full bg-blue-500 text-white rounded">update</button>
-          </div>
-           <p className="text-center mt-4 text-red-500">
-            {message}
+          <input
+            type="text"
+            placeholder="Department"
+            value={dept}
+            onChange={(e) =>
+              setDept(e.target.value)
+            }
+            className="w-full border p-3 rounded"
+          />
+
+          <button
+            onClick={update}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded"
+          >
+            Update Profile
+          </button>
+
+          {message && (
+            <p className="text-center text-green-600">
+              {message}
             </p>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

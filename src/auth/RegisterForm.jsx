@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useContext } from 'react' 
-import { UserContext } from '../common/Context'
+import { UserContext } from '../common/UserContext'
 import { Link, useNavigate} from "react-router-dom";
 
 export default function RegisterUser() {

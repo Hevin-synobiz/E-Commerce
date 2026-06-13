@@ -1,49 +1,110 @@
-import React, { useState, useContext } from "react";
-import { UserContext } from "../common/Context";
+import React, { useContext } from "react";
+import { UserContext } from "../common/UserContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Cart() {
-  const { Item } = useContext(UserContext);
-  const [qty, setQty] = useState(1);
-  if (!Item) {
-    return <h1 className="text-center mt-10">No Product Added</h1>;
-  }
+  const {
+    cartItems,
+    setCartItems,
+    setBuyItem,
+  } = useContext(UserContext);
+
+  const navigate = useNavigate();
+
+  const removeItem = (id) => {
+    setCartItems(
+      cartItems.filter((item) => item.id !== id)
+    );
+  };
+
+  const buyNow = (item) => {
+    setBuyItem(item);
+    navigate("/bill");
+  };
+
+  const total = cartItems.reduce(
+    (sum, item) =>
+      sum + item.price * (item.qty || 1),
+    0
+  );
+
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-      <div className="bg-white p-10 rounded-xl shadow-xl w-96">
-          <img
-            src={Item.thumbnail}
-            alt={Item.title}
-            className="w-full h-70 object-cover rounded"
-          />
+    <div className="min-h-screen bg-gray-100 p-8">
+      <h1 className="text-4xl font-bold mb-8">
+        Shopping Cart
+      </h1>
 
-          <h5 className="text-2xl font-bold">
-            {Item.title}
-          </h5>
-
-          <p className="text-gray-600 mt-2">
-            ₹ {Item.price}
-          </p>
-
-          <label className="font-bold block">
-            Quantity
-          </label>
-
-          <input
-            type="number"
-            min="1"
-            value={qty}
-            onChange={(e) => setQty(Number(e.target.value))}
-            className="w-full border p-3 rounded mt-2"
-          />
-
-          <h2 className="text-2xl te mt-6">
-            Total: ₹ {qty * Item.price}
+      {cartItems.length === 0 ? (
+        <div className="bg-white rounded-lg p-10 text-center shadow">
+          <h2 className="text-2xl text-gray-500">
+            Cart is Empty
           </h2>
+        </div>
+      ) : (
+        <>
+          <div className="space-y-5">
+            {cartItems.map((item) => (
+              <div
+                key={item.id}
+                className="bg-white rounded-xl shadow-md p-5 flex items-center justify-between"
+              >
+                <div className="flex gap-5 items-center">
+                  <img
+                    src={item.thumbnail}
+                    alt={item.title}
+                    className="w-28 h-28 object-cover rounded-lg"
+                  />
 
-          <button className="w-full bg-blue-500 text-white p-3 rounded mt-6">
-            Buy
-          </button>
-      </div>
+                  <div>
+                    <h3 className="text-xl font-semibold">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-gray-500">
+                      ₹ {item.price}
+                    </p>
+
+                    <p className="text-gray-500">
+                      Qty : {item.qty || 1}
+                    </p>
+
+                    <p className="font-bold text-green-600">
+                      Total : ₹{" "}
+                      {item.price * (item.qty || 1)}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => buyNow(item)}
+                    className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg"
+                  >
+                    Buy Now
+                  </button>
+
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-lg"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+         <div className="bg-black text-white shadow-2xl rounded-xl mt-8 p-6 flex justify-between items-center border border-gray-700">
+            <h2 className="text-3xl font-bold">
+              Grand Total
+            </h2>
+
+            <h2 className="text-3xl font-bold text-emerald-400">
+              ₹ {total}
+            </h2>
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -1,43 +1,45 @@
-import React, { useState, useContext } from "react";
-import { UserContext } from "../common/Context";
+import React, { useContext } from "react";
+import { UserContext } from "../common/UserContext";
 
 export default function Bill() {
-  const { Item } = useContext(UserContext);
-  const [qty, setQty] = useState(1);
+  const { buyItem } = useContext(UserContext);
+
+  if (!buyItem) {
+    return (
+      <h1 className="text-center mt-10">
+        No Product Selected
+      </h1>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-
-      <div className="bg-white p-10 rounded-xl shadow-xl w-[500px]">
-        <h1 className="text-4xl font-bold text-center mb-8">
-          Final Bill
+    <div className="flex justify-center mt-10">
+      <div className="bg-white p-8 shadow rounded w-[500px]">
+        <h1 className="text-3xl mb-5">
+          Order Summary
         </h1>
+
         <img
-            src={Item.thumbnail}
-            alt={Item.title}
-            className="w-full h-70 object-cover rounded"
+          src={buyItem.thumbnail}
+          alt={buyItem.title}
+          className="w-full h-60 object-cover"
         />
 
-        <div className="border-b pb-4 mb-4">
+        <h2 className="font-bold text-xl mt-4">
+          {buyItem.title}
+        </h2>
 
-          <div className="flex justify-between mb-2">
-            <span>{Item.title}</span>
-            <span>{Item.price}</span>
-          </div>
+        <p className="text-green-600 text-2xl">
+          ₹ {buyItem.price}
+        </p>
 
-        </div>
-
-        <div className="flex justify-between text-2xl font-bold text-green-600">
-          <span>Total</span>
-          <span>{Item.price}</span>
-        </div>
-
-        <button className="w-full bg-green-500 text-white p-3 rounded mt-8">
+        <button
+          onClick={() => window.print()}
+          className="w-full bg-green-500 text-white p-3 mt-5 rounded"
+        >
           Print Bill
         </button>
-
       </div>
-
     </div>
   );
 }
