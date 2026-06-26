@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { useContext } from 'react' 
-import { UserContext } from '../common/UserContext'
-import { Link, useNavigate} from "react-router-dom";
-
+import React, { useState, useContext } from "react";
+import { UserContext } from "../common/UserContext";
+import { useNavigate } from "react-router-dom";
+import {Link } from "react-router-dom";
 export default function RegisterUser() {
-  const { setUser } = useContext(UserContext)
+
+  const { setUser } = useContext(UserContext);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,101 +16,272 @@ export default function RegisterUser() {
 
   const navigate = useNavigate();
 
+
   const register = () => {
+
     const emailPattern =
       /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 
     if (!emailPattern.test(email)) {
       setMessage("Invalid Email Address");
       return;
     }
 
+
     if (pass.length < 4) {
       setMessage("Password must be 4 characters");
       return;
     }
 
-    setUser({
-      name,
-      email,
-      phone,
-      dept,
-      pass
-    });
 
-    const user = JSON.stringify([{
-        "Name": name,
-        "Email": email,
-        "Phone": phone,
-        "Dept": dept,
-        "Pass": pass
-    }])
-    localStorage.setItem("user", user);
+    const userData = {
+      Name: name,
+      Email: email,
+      Phone: phone,
+      Dept: dept,
+      Pass: pass
+    };
+
+
+    setUser(userData);
+
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify([userData])
+    );
+
+
+    setMessage("Registration Successful");
 
 
     setTimeout(() => {
       navigate("/home");
-    }, 500);
+    }, 700);
+
   };
+
 
   return (
     <>
-      <div className="flex justify-center items-center h-screen">
-        <div>
-          <h2>Registration</h2>
+      <style>
+        {`
 
-          <div style={{ display: "flex", gap: "20px", flexDirection: "column",}}>
-            <div style={{ display: "flex", gap: "40px", justifyContent: "center"}}>
-              <label>Name: </label>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="border rounded"
-              />
-            </div>
+        .register-page {
+          min-height:100vh;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          padding:30px;
+          background:linear-gradient(
+            135deg,
+            #eef2ff,
+            #f8fafc
+          );
+          font-family:Inter,sans-serif;
+        }
 
-            <div style={{ display: "flex", gap: "40px", justifyContent: "center" }}>
-              <label>Email :</label>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="border rounded"
-              />
-            </div>
 
-            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-              <label>Password :</label>
-              <input
-                value={pass}
-                onChange={(e) => setPass(e.target.value)}
-                className="border rounded"
-              />
-            </div>
+        .register-card {
+          width:500px;
+          background:white;
+          padding:40px;
+          border-radius:30px;
+          box-shadow:0 20px 50px rgba(0,0,0,.12);
+          transition:.3s;
+        }
 
-            <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-              <label>Phone no.:</label>
-              <input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="border rounded"
-              />
-            </div>
 
-            <div style={{ display: "flex", gap: "45px", justifyContent: "center" }}>
-              <label>Dept.:</label>
-              <input
-                value={dept}
-                onChange={(e) => setDept(e.target.value)}
-                className="border rounded"
-              />
-            </div>
-            <button onClick={register} className="w-full bg-blue-500 text-white rounded">Submit</button>
+        .register-card:hover {
+          transform:translateY(-8px);
+        }
+
+
+        .register-title {
+          text-align:center;
+          font-size:40px;
+          font-weight:900;
+          margin-bottom:30px;
+          background:linear-gradient(
+            90deg,
+            #2563eb,
+            #9333ea
+          );
+          -webkit-background-clip:text;
+          color:transparent;
+        }
+
+
+        .input-box {
+          margin-bottom:18px;
+        }
+
+
+        label {
+          display:block;
+          margin-bottom:8px;
+          font-weight:700;
+          color:#334155;
+        }
+
+
+        input {
+          width:100%;
+          padding:14px;
+          border-radius:15px;
+          border:1px solid #cbd5e1;
+          outline:none;
+          font-size:16px;
+          transition:.3s;
+        }
+
+
+        input:focus {
+          border-color:#2563eb;
+          box-shadow:0 0 0 3px rgba(37,99,235,.15);
+        }
+
+
+        .submit-btn {
+          width:100%;
+          margin-top:10px;
+          padding:15px;
+          border:none;
+          border-radius:15px;
+          color:white;
+          font-size:18px;
+          font-weight:800;
+          cursor:pointer;
+          background:linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+          );
+          transition:.3s;
+        }
+
+
+        .submit-btn:hover {
+          transform:scale(1.05);
+        }
+
+
+        .message {
+          text-align:center;
+          margin-top:20px;
+          color:#16a34a;
+          font-weight:700;
+        }
+
+
+        @media(max-width:600px){
+
+          .register-card {
+            width:100%;
+            padding:25px;
+          }
+
+          .register-title {
+            font-size:32px;
+          }
+
+        }
+
+        `}
+      </style>
+
+
+      <div className="register-page">
+
+        <div className="register-card">
+
+          <h1 className="register-title">
+            📝 Registration
+          </h1>
+
+
+          <div className="input-box">
+            <label>Name</label>
+
+            <input
+              value={name}
+              onChange={(e)=>setName(e.target.value)}
+              placeholder="Enter Name"
+            />
           </div>
-           <p className="text-center mt-4 text-red-500">
-            {message}
+
+
+          <div className="input-box">
+            <label>Email</label>
+
+            <input
+              type="email"
+              value={email}
+              onChange={(e)=>setEmail(e.target.value)}
+              placeholder="Enter Email"
+            />
+          </div>
+
+
+          <div className="input-box">
+            <label>Password</label>
+
+            <input
+              type="password"
+              value={pass}
+              onChange={(e)=>setPass(e.target.value)}
+              placeholder="Enter Password"
+            />
+          </div>
+
+
+          <div className="input-box">
+            <label>Phone Number</label>
+
+            <input
+              value={phone}
+              onChange={(e)=>setPhone(e.target.value)}
+              placeholder="Enter Phone"
+            />
+          </div>
+
+
+          <div className="input-box">
+            <label>Department</label>
+
+            <input
+              value={dept}
+              onChange={(e)=>setDept(e.target.value)}
+              placeholder="Enter Department"
+            />
+          </div>
+
+          <div className="loginlink">
+            <Link to='/'>
+            Login?
+            </Link>
+          </div>
+          <button
+            onClick={register}
+            className="submit-btn"
+          >
+            Register
+          </button>
+
+
+          {
+            message &&
+            <p className="message">
+              {message}
             </p>
+          }
+
+
         </div>
+
       </div>
+
     </>
   );
 }
